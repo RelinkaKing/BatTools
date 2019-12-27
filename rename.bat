@@ -1,0 +1,10 @@
+rem md RA0801001 RA0801002 RA0801007 RA0801009 RA0801010 RA0801011 RA0801003 RA0801006 RA0801005 RA0801004 RA0901001 RA0801008
+set a=1000
+
+setlocal EnableDelayedExpansion
+
+FOR /f "tokens=*" %%i IN ('dir /a:d /b') DO (
+
+ren "%%i" "%%i_1"
+
+)

@@ -1,0 +1,4 @@
+@echo on
+REG DELETE HKEY_CURRENT_USER\Software\vesal\Vesal3DAnatomy /f
+REG DELETE HKEY_CURRENT_USER\SOFTWARE\vesal\vesal_pc /f
+REG DELETE HKEY_CURRENT_USER\SOFTWARE\vesal\unity_pc /f
