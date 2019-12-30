@@ -1,25 +1,38 @@
 @echo off
 @set unity="D:\Program Files\unity2017.2.0.f3\Editor\Unity.exe"
-@set projectPath="D:\UnityWorkSpace\UnityPC\VesalUnityCombine_user"
-@set exportWindowsExePath="D:\git\unityAndPorjectOutput\Vesal3DAnatomy\assets\"
-@set targetUnityPath="D:\vesal\pc_export"
+@set unityProjectPath="D:\UnityWorkSpace\UnityPC\VesalUnityCombine_user"
+@set unityBranch=dev
+@set reactProjectPath="D:\Vesal\Vesal_PC_user\wpf_new"
+@set reactBranch=vesal_user
 
-rem switch to dev branch
-git -C %projectPath% checkout dev
-git -C %projectPath% pull origin dev
+@set mainAssetsPath=".\Vesal_PC\bin\x86\ReleaseBundle"
+@set exportWindowsExePath=".\Vesal_PC\bin\x86\ReleaseBundle\win"
+@set reactAssetsPath=".\Vesal_PC\bin\x86\ReleaseBundle\ReactAssets"
 
-rem exporting Goggle project...（see code in Commandbuild.cs）
-CALL %unity%  -batchmode -quit -nographics -executeMethod Commandbuild.BuildAndroid  -logFile ./UnityEditor.log -projectPath  %projectPath%
+rem 切换分支 %unityBranch% branch
+git -C %unityProjectPath% checkout %unityBranch%
+git -C %unityProjectPath% pull origin %unityBranch%
+rem 切换分支 %reactBranch% branch
+git -C %reactProjectPath% checkout %reactBranch%
+git -C %reactProjectPath% pull origin %reactBranch%
 
-rem replace files!
-rd /s /q .\android\app\src\main\assets\bin
-move %exportGooGleProjectPath% %targetUnityPath%
+rem 删除版本文件 delete ReleaseBundle
+rd /Q /S %mainAssetsPath%
 
+rem 1. 创建window原生应用程序 re-build-x86-releasebundle bin file
+call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\Common7\Tools\VsDevCmd.bat"
+msbuild /p:Configuration=ReleaseBundle;Platform=x86 /target:Clean;Rebuild
 
-rem export react-native bundle!
+rem 2. 导出react bundle文件 export react-native bundle! copy ReactAssets to releasebundle 
+react-native bundle --platform windows --entry-file index.js --dev false --bundle-output wpf/Vesal_PC/ReactAssets\/index.wpf.bundle  --assets-dest wpf/Vesal_PC/ReactAssets/
+echo D | xcopy .\Vesal_PC\ReactAssets  %reactAssetsPath% /s /y
 
-rem re-build-x86-release bin file
+rem 3. 添加下载库文件 add extral file(wget.exe etc)
+echo D | xcopy .\build_extral .\Vesal_PC\bin\x86\ReleaseBundle /s /y
 
-rem add extral file(wget.exe etc)
+rem 4. 导出unity到指定目录 exporting windows application exe file...（see code in Commandbuild.cs）
+call %unity%  -batchmode -quit -nographics -executeMethod Commandbuild.BuildAndroid  -logFile ./UnityEditor.log -projectPath  %exportWindowsExePath%
 
-rem move resource file to target path
+rem 构建完成 build complete
+cd %mainAssetsPath%
+start ..\
