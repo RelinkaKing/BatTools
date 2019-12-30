@@ -1,19 +1,21 @@
-@echo 开始构建!!
+@echo start...
 
-rem svn update
-svn up
-cd ..\Model_3d\Release
-svn up
-cd ..\..\PPTPlugin
+rem svn up
+rem svn up
+rem cd ..\Model_3d\Release
+rem svn up
+rem cd ..\..\PPTPlugin
+rem 更新install
+rem git -C C:\install\ pull
 
 rem clean player
-rem 删除目录
 rd /Q /S VesalPlayerPlugin2010\VesalPlayerPlugin2010\bin
 rd /Q /S VesalPlayerPlugin2010\VesalPlayerPlugin2010\obj
 
 rd /Q /S VesalPlayerPlugin2010\VesalPlayerSetup\VesalPlayerSetup
 
 del C:\install\Unity\*.zip
+del C:\install\VesalPlayer\*.zip
 
 rem upgrader
 rd /Q /S vesal_upgrade\vesal_upgrade\bin
@@ -54,17 +56,13 @@ zip -r -q unity.zip *
 move unity.zip C:\install\Unity
 cd ..\..\PPTPlugin
 
-
-
-rem 编译 player
-cd VesalPlayerPlugin2010
-msbuild
-
-rem 压缩并拷贝安装包到 c:\install 目录
-cd VesalPlayerSetup\VesalPlayerSetup\Express\DVD-5\DiskImages\DISK1
-zip -q -r VesalPlayer.zip *
+rem 拷贝 3d 播放器
+cd ..\Model_3d\new_ppt_player
+del *.zip
+zip -r -q VesalPlayer.zip *
 move VesalPlayer.zip C:\install\VesalPlayer
-cd ..\..\..\..\..\..\..\
+cd ..\..\PPTPlugin
+
 
 rem 完成最终版本
 cd VesalPPTPlugin2010
@@ -78,8 +76,10 @@ zip -r -q vesal_install.zip *
 rem 只生成一个安装包，就是最新的
 move vesal_install.zip C:\install\
 
-cd D:\code\vesal_gongwang\pc_model\PPTPlugin
-type Common\common_value.cs | findstr version_info > c:\install\pack_ver.txt
+rem cd D:\code\vesal_gongwang\pc_model\PPTPlugin
+rem type Common\common_value.cs | findstr version_info > c:\install\pack_ver.txt
 
 
 pause
+
+

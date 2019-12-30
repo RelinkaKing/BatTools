@@ -24,3 +24,19 @@ echo "" ""
 echo Éý¼¶Íê±Ï
 echo =======
 
+@echo off
+rd /Q /S Common
+rd /Q /S VesalPPTPlugin07
+rd /Q /S VesalPPTPlugin10
+rd /Q /S VesalPPTPlugin16
+
+svn up
+svn info | findstr Changed | findstr Rev > version.txt
+
+for /f "tokens=2,* delims=:" %%a in (version.txt) do (
+	set c1=%%a
+)
+del version.txt
+echo namespace VesalCommon{  class vesal_version   {   private static int _v =  > Common\version.cs
+echo %c1% >> Common\version.cs
+echo ;        public static int get_ver() { return _v; }    }   }  >> Common\version.cs
